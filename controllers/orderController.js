@@ -13,7 +13,7 @@ const orderController = {
 
             res.status(200).json(userOrders)
         } catch (error) {
-            res.status(200).json({ messeage: 'Failed to get order' })
+            res.status(200).json({ message: 'Failed to get order' })
         }
     },
 }
