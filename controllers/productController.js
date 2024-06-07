@@ -1,22 +1,24 @@
 const Product = require('../models/Product')
+const Message = require('../common/messages/ConstantMessage')
+const JsonResponse = require('../common/response/JsonResponse')
 
 const productController = {
     createProduct: async (req, res) => {
         const newProduct = new Product(req.body)
         try {
             await newProduct.save()
-            res.status(200).json('product created')
+            return res.status(200).send(JsonResponse(200, Message.CREATE_PRODUCT_SUCCESS, null))
         } catch (error) {
-            res.status(500).json('failed to create product')
+            return res.status(500).send(JsonResponse(500, Message.CREATE_PRODUCT_FAIL, null))
         }
     },
 
     getAllProducts: async (req, res) => {
         try {
             const products = await Product.find().sort({ createdAt: -1 })
-            res.status(200).json(products)
+            return res.status(200).send(JsonResponse(200, Message.FIND_PRODUCT, products))
         } catch (error) {
-            res.status(500).json('failed to get the products')
+            return res.status(500).send(JsonResponse(500, Message.NOT_FOUND_PRODUCT, null))
         }
     },
 
@@ -25,9 +27,9 @@ const productController = {
         try {
             const product = await Product.findById(productId)
             const { __v, createdAt, ...productData } = product._doc
-            res.status(200).json(productData)
+            return res.status(200).send(JsonResponse(200, Message.FIND_PRODUCT, productData))
         } catch (error) {
-            res.status(500).json('failed to get the product')
+            return res.status(500).send(JsonResponse(500, Message.NOT_FOUND_PRODUCT, null))
         }
     },
 
@@ -46,9 +48,9 @@ const productController = {
                     },
                 },
             ])
-            res.status(200).json(results)
+            return res.status(200).send(JsonResponse(200, Message.FIND_PRODUCT, results))
         } catch (error) {
-            res.status(500).json('failed to get the product')
+            return res.status(500).send(JsonResponse(500, Message.NOT_FOUND_PRODUCT, null))
         }
     },
 }

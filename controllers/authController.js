@@ -1,7 +1,8 @@
 const User = require('../models/User')
-
 const CryptoJS = require('crypto-js')
 const jwt = require('jsonwebtoken')
+const Message = require('../common/messages/ConstantMessage')
+const JsonResponse = require('../common/response/JsonResponse')
 
 const authController = {
     createUser: async (req, res) => {
@@ -13,21 +14,22 @@ const authController = {
         })
         try {
             await newUser.save()
-            res.status(201).json({ message: 'User successfully created' })
+            return res.status(201).send(JsonResponse(201, Message.CREATE_CUSTOMER_SUCCESS, null))
         } catch (error) {
-            res.status(500).json({ message: error })
+            return res.status(500).send(JsonResponse(500, Message.CREATE_CUSTOMER_FAIL, null))
         }
     },
 
     loginUser: async (req, res) => {
         try {
             const user = await User.findOne({ email: req.body.email })
-            !user && res.status(401).json('Could not find the user')
+            if (!user) return res.status(401).send(JsonResponse(401, Message.NOT_FOUND_CUSTOMER, null))
 
             const decryptedpass = CryptoJS.AES.decrypt(user.password, process.env.SECRET_KEY)
             const thepassword = decryptedpass.toString(CryptoJS.enc.Utf8)
 
-            thepassword !== req.body.password && res.status(401).json('Wrong Password')
+            if (thepassword !== req.body.password)
+                return res.status(401).send(JsonResponse(401, Message.WRONG_PASSWORD, null))
 
             const userToken = jwt.sign(
                 {
@@ -39,9 +41,9 @@ const authController = {
 
             const { password, __v, updatedAt, createdAt, ...others } = user._doc
 
-            res.status(200).json({ ...others, token: userToken })
+            return res.status(200).send(JsonResponse(200, Message.LOGIN_SUCCESS, { ...others, token: userToken }))
         } catch (error) {
-            res.status(500).json('Failed to login, check your credentials')
+            return res.status(500).send(JsonResponse(500, Message.LOGIN_FAIL, null))
         }
     },
 }

@@ -1,5 +1,7 @@
 const Product = require('../models/Product')
 const Cart = require('../models/Cart')
+const Message = require('../common/messages/ConstantMessage')
+const JsonResponse = require('../common/response/JsonResponse')
 
 const cartController = {
     addCart: async (req, res) => {
@@ -15,17 +17,17 @@ const cartController = {
                     cart.products.push({ cartItem, quantity: 1 })
                 }
                 await cart.save()
-                res.status(200).json('Product added to cart')
+                return res.status(200).send(JsonResponse(200, Message.ADD_ITEM_SUCCESS, null))
             } else {
                 const newCart = new Cart({
                     userId,
                     products: [{ cartItem, quantity: 1 }],
                 })
                 await newCart.save()
-                res.status(200).json('Product added to cart')
+                return res.status(200).send(JsonResponse(200, Message.ADD_ITEM_SUCCESS, null))
             }
         } catch (error) {
-            res.status(500).json(error)
+            return res.status(500).send(JsonResponse(500, Message.ADD_ITEM_FAIL, null))
         }
     },
 
@@ -33,9 +35,9 @@ const cartController = {
         const userId = req.user.id
         try {
             const cart = await Cart.find({ userId })
-            res.status(200).json(cart)
+            return res.status(200).send(JsonResponse(200, Message.FIND_PRODUCT, cart))
         } catch (error) {
-            res.status(500).json(error)
+            return res.status(500).send(JsonResponse(500, Message.EMPTY_CART, null))
         }
     },
 
@@ -48,11 +50,11 @@ const cartController = {
                 { new: true },
             )
             if (!updatedCart) {
-                return res.status(404).json({ message: 'cart item not found' })
+                return res.status(404).send(JsonResponse(404, Message.NOT_FOUND_CART, null))
             }
-            res.status(200).json(updatedCart)
+            return res.status(200).send(JsonResponse(200, Message.DELETE_CART_SUCCESS, updatedCart))
         } catch (error) {
-            res.status(500).json(error)
+            return res.status(500).send(JsonResponse(500, Message.DELETE_CART_FAIL, null))
         }
     },
 }

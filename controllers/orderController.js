@@ -1,4 +1,6 @@
 const Orders = require('../models/Order')
+const Message = require('../common/messages/ConstantMessage')
+const JsonResponse = require('../common/response/JsonResponse')
 
 const orderController = {
     getUserOrders: async (req, res) => {
@@ -11,9 +13,9 @@ const orderController = {
                 })
                 .exec()
 
-            res.status(200).json(userOrders)
+            return res.status(200).send(JsonResponse(200, Message.ADD_ORDER_SUCCESS, userOrders))
         } catch (error) {
-            res.status(200).json({ message: 'Failed to get order' })
+            return res.status(500).send(JsonResponse(500, Message.ADD_ORDER_FAIL, null))
         }
     },
 }

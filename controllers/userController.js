@@ -1,4 +1,6 @@
 const User = require('../models/User')
+const Message = require('../common/messages/ConstantMessage')
+const JsonResponse = require('../common/response/JsonResponse')
 
 const userController = {
     getUser: async (req, res) => {
@@ -7,9 +9,9 @@ const userController = {
 
             const { password, __v, updatedAt, createdAt, ...userData } = user._doc
 
-            res.status(200).json(userData)
+            return res.status(200).send(JsonResponse(200, Message.FOUND_CUSTOMER_SUCCESS, userData))
         } catch (error) {
-            res.status(500).json(error)
+            return res.status(500).send(JsonResponse(500, Message.FOUND_CUSTOMER_SUCCESS, null))
         }
     },
 }

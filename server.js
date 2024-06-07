@@ -7,12 +7,11 @@ const authRoute = require('./routes/auth')
 const userRoute = require('./routes/user')
 const orderRoute = require('./routes/order')
 const cartRoute = require('./routes/cart')
-const port = 8080
 
 dotenv.config()
 mongoose
     .connect(process.env.MONGO_URL)
-    .then(() => console.log('db connected'))
+    .then(() => console.log('Database connected'))
     .catch((err) => console.log(err))
 
 app.use(express.json({ limit: '10mb' }))
@@ -24,4 +23,4 @@ app.use('/api/users', userRoute)
 app.use('/api/cart', cartRoute)
 app.use('/api/orders', orderRoute)
 
-app.listen(process.env.PORT || port, () => console.log(`Example app listening on port ${process.env.PORT}!`))
+app.listen(process.env.PORT, () => console.log(`Server is running on port ${process.env.PORT}`))
