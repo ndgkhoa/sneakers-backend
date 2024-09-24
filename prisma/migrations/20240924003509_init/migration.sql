@@ -14,6 +14,7 @@ CREATE TABLE "Products" (
     "price" DOUBLE PRECISION NOT NULL,
     "rating" DOUBLE PRECISION,
     "stockQuantity" INTEGER NOT NULL,
+    "imageUrl" TEXT,
 
     CONSTRAINT "Products_pkey" PRIMARY KEY ("productId")
 );

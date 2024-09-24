@@ -25,6 +25,7 @@ model Products {
   price         Float
   rating        Float?
   stockQuantity Int
+  imageUrl      String?
   Sales         Sales[]
   Purchases     Purchases[]
 }
